@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+# change paths to your C++ compiler
 set( CMAKE_C_COMPILER /opt/local/bin/gcc-mp-5 )
 set( CMAKE_CXX_COMPILER /opt/local/bin/g++-mp-5 )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 " )
