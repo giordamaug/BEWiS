@@ -51,8 +51,11 @@ To run the code the following libraries must be installed:
 Configure and compile sources:
 
 $ cmake .
+
 $ make
+
 $ bewis  -i <inputidr>
+
 
 
 
