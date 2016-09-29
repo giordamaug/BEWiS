@@ -25,14 +25,14 @@ namespace cv {
     
     // default parameters of wisard background detection algorithm
     static const int defaultNoBits = 4;
-    static const int defaultNoTics = 128;
+    static const int defaultNoTics = 256;
     static const int defaultCacheSize = 32;
     static const double defaultTrainIncr = 1.0;
     static const double defaultTrainDecr = 1.0;
     static const double defaultVarThreshold = 0.75;
     static const double defaultVarWatermark = 0.0;
     static const double defaultVarUpWatermark = 50.0;
-    static const int defaultSelectThreshold = 3;
+    static const int defaultSelectThreshold = 2;
     static const int defaultLearningStage = 0;
 
     class BackgroundSubtractorWISImpl : public BackgroundSubtractorWIS {
@@ -54,6 +54,20 @@ namespace cv {
             Size frameSize;
             int frameType;
             //! the default constructor
+            BackgroundSubtractorWISImpl() {
+                noBits = defaultNoBits;
+                noTics = defaultNoTics;
+                dimTics = (int) (256 / noTics);
+                trainIncr = defaultTrainIncr;
+                trainDecr = defaultTrainDecr;
+                selectThreshold = defaultSelectThreshold;
+                varThreshold = defaultVarThreshold;
+                varWatermark = defaultVarWatermark;
+                varUpWatermark = defaultVarUpWatermark;
+                cacheSize = defaultCacheSize;
+                learningStage = defaultLearningStage;
+                hits = misses = tcount = 0;
+            }
             BackgroundSubtractorWISImpl(cv::Size fsize, int ftype) {
                 noBits = defaultNoBits;
                 noTics = defaultNoTics;
@@ -97,14 +111,13 @@ namespace cv {
                 cache_entry_t * cache;
                 pix_t **neigh_map;
                 uchar B,G,R;
-                uchar fgB,fgG,fgR;
                 wisard_t *wiznet = _wiznet;
                 int *histos = histoArray;
                 
                 Mat image = _image.getMat();
                 double sum=0;
                 neigh_map = wiznet->neigh_map;
-#pragma omp parallel for schedule(static) shared(image,wiznet,neigh_map) private(sum,discr,cache,data,odata,fgdata,R,G,B,fgR,fgG,fgB,color,keys)
+#pragma omp parallel for schedule(static) shared(image,wiznet,neigh_map) private(sum,discr,cache,data,odata,fgdata,R,G,B,color,keys)
                 for (int j=0; j<image.rows; j++) {
                     data= image.ptr<uchar>(j);
                     odata= fgmask.ptr<uchar>(j);
@@ -119,11 +132,11 @@ namespace cv {
                         color = maxcolor[j*image.cols + i];
                         keys = maxkeys[j*image.cols + i];
                         // classify
-                        sum = 0;
+                        //sum = 0;
                         for (int neuron=0;neuron<noRams;neuron++) {
-                            if (wram_get(discr[neuron],cache->tuple[neuron]) > varWatermark) {
-                                sum++;
-                            }
+                            //if (wram_get(discr[neuron],cache->tuple[neuron]) > varWatermark) {
+                            //    sum++;
+                            //}
                             if (learningStage >= 0 || cache->weight > selectThreshold) keys[neuron] = wram_up_key_down_rest(discr[neuron], cache->tuple[neuron],trainIncr,trainDecr,varUpWatermark);
                         }
                         
@@ -196,17 +209,18 @@ namespace cv {
             virtual void setNoBits(int _nobits) { noBits = _nobits; }
             virtual int getNoTics() const { return noTics; }
             virtual void setNoTics(int _notics) { noTics = _notics; }
+            virtual int getNoRams() const { return noRams; }
             virtual int getCacheSize() const { return cacheSize; }
             virtual void setCacheSize(int _size) { cacheSize = _size; }
-            virtual int getTrainIncr() const { return trainIncr; }
+            virtual double getTrainIncr() const { return trainIncr; }
             virtual void setTrainIncr(double _incr) { trainIncr = _incr; }
-            virtual int getTrainDecr() const { return trainDecr; }
+            virtual double getTrainDecr() const { return trainDecr; }
             virtual void setTrainDecr(double _decr) { trainDecr = _decr; }
-            virtual int getVarThreshold() const { return varThreshold; }
+            virtual double getVarThreshold() const { return varThreshold; }
             virtual void setVarThreshold(double _thr) { varThreshold = _thr; }
-            virtual int getVarWatermark() const { return varWatermark; };
+            virtual double getVarWatermark() const { return varWatermark; };
             virtual void setVarWatermark(double _mark) { varWatermark = _mark; }
-            virtual int getVarUpWatermark() const { return varUpWatermark; };
+            virtual double getVarUpWatermark() const { return varUpWatermark; };
             virtual void setVarUpWatermark(double _mark) { varUpWatermark = _mark; }
             virtual int getSelectThreshold() const { return selectThreshold; };
             virtual void setSelectThreshold(int _selthr) { selectThreshold = _selthr; }
@@ -226,6 +240,22 @@ namespace cv {
                 else if (name == "varWatermark") setVarWatermark(value);
                 else if (name == "varThreshold") setVarThreshold(value);
                 else if (name == "varUpWatermark") setVarUpWatermark(value);
+            } ;
+            int getInt(const String& name) {
+                if (name == "noBits") getNoBits();
+                else if (name == "noTics") getNoTics();
+                else if (name == "noRams") getNoRams();
+                else if (name == "dimTics") getDimTics();
+                else if (name == "cacheSize") getCacheSize();
+                else if (name == "selectThreshold") getSelectThreshold();
+                else if (name == "learningStage") getLearningStage();
+            } ;
+            double getDouble(const String& name) {
+                if (name == "trainIncr") return getTrainIncr();
+                else if (name == "trainDecr") return getTrainDecr();
+                else if (name == "varWatermark") return getVarWatermark();
+                else if (name == "varThreshold") return getVarThreshold();
+                else if (name == "varUpWatermark") return getVarUpWatermark();
             } ;
         protected:
             wisard_t *_wiznet = (wisard_t *)NULL;
@@ -275,7 +305,8 @@ namespace cv {
                         //printf("HIT:  ");
                         hits++;
                         if (p == cache) {  // hit and in front
-                            cache->weight += cache->idx;
+                            cache->weight += cache->idx; // BUG fixed !
+                            //cache->weight = cache->idx;
                             cache->idx++;
                         } else {            // hit and not in front (move to front)
                             prec->next = p->next;   // remove item
@@ -284,6 +315,7 @@ namespace cv {
                             p->prev = cache->prev;
                             p->next = cache;
                             cache->prev = p;
+                            //p->weight = 0; // BUG fixed !
                             p->idx = 1;
                             cache = p;
                         }
@@ -334,6 +366,9 @@ namespace cv {
             }
     };
 
+    Ptr<BackgroundSubtractorWIS> createBackgroundSubtractorWIS() {
+        return makePtr<BackgroundSubtractorWISImpl>();
+    }
     Ptr<BackgroundSubtractorWIS> createBackgroundSubtractorWIS(cv::Size fsize, int ftype) {
         return makePtr<BackgroundSubtractorWISImpl>(fsize,ftype);
     }
