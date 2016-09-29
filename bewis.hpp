@@ -42,13 +42,13 @@ vector<string> tokenizer(string str, char delimiter) {
     return v;
 }
 
-int parsePolicy(string settings,int &incr, int &decr) {
+int parsePolicy(string settings,double &incr, double &decr) {
     vector<string> args = tokenizer(settings, ':') ;
     if (args.size() != 2) {
         return -1;
     } else {
-        incr = atoi(args[0].c_str());
-        decr = atoi(args[1].c_str());
+        incr = (double)atof(args[0].c_str());
+        decr = (double)atof(args[1].c_str());
         if (incr < 1 || decr < 0) {
             return -1;
         }
