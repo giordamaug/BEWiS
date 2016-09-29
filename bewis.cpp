@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
     int dcnt;
     vector<string> dlist = vector<string>();
     string videoname;
-    int incr=1, decr=1;
+    double incr=1.0, decr=1.0;
     int err;
     int delta;
     bool outflag= false;
@@ -143,17 +143,17 @@ int main(int argc, char** argv) {
     struct timeval t1, t2;
     
     // Set Command Line Parser
-    bool verboseSwitch = false;
+    bool verboseFlag = false;
     bool erosionFlag = false; bool blurFlag = false; bool dilationFlag = false;
-    int reverseTimes = 0;
+    bool reverseFlag = false;
     string indirname = ".";
     string outdirname = ".";
     string extArg = "png";
-    string coding = "Lab";
-    int nbit = 16, ntics = 128, learntime = 0, cachesize = 20;
+    string coding = "RGB";
+    int nbit = 4, ntics = 256, learntime = 0, cachesize = 20;
     string policy = "1:1";
     double watermark = 0.0, uppermark = 50.0, thresh = 0.75;
-    double selectthresh = 3.0;
+    int selectthresh = 2;
     vector<string> args(argv + 1, argv + argc);
     for (vector<string>::iterator i = args.begin(); i != args.end(); ++i) {
         if (*i == "-h" || *i == "--help") {
@@ -162,21 +162,35 @@ int main(int argc, char** argv) {
             cout << string(14, ' ') << "-o <outdir>, --outdir <outdir>" << endl;
             cout << string(17, ' ') << "BG output folder" << endl;
             cout << string(14, ' ') << "-m <RGB|Lab|HUV>, --mode <RGB|Lab|HUV>" << endl;
-            cout << string(17, ' ') << "color mode (default: Lab)" << endl;
-            cout << string(14, ' ') << "-p <int:int>, -policy <int:int>" << endl;
+            cout << string(17, ' ') << "color mode (default: RGB)" << endl;
+            cout << string(14, ' ') << "-p <int:int>, --policy <int:int>" << endl;
             cout << string(17, ' ') << "NN policy (default: 1:1)" << endl;
-            cout << string(14, ' ') << "-x <png|jpg>, -extension <png|jpg>" << endl;
+            cout << string(14, ' ') << "-x <png|jpg>, --extension <png|jpg>" << endl;
             cout << string(17, ' ') << "image format (default: png)" << endl;
-            cout << string(14, ' ') << "-b <int>, -bits <int>" << endl;
-            cout << string(17, ' ') << "NN bit resolution (default: 16)" << endl;
-            cout << string(14, ' ') << "-z <int>, -scale <int>" << endl;
-            cout << string(17, ' ') << "color discretization scale (default: 128)" << endl;
-            cout << string(14, ' ') << "-t <double>, -threshold <double>" << endl;
+            cout << string(14, ' ') << "-b <int>, --bits <int>" << endl;
+            cout << string(17, ' ') << "NN bit resolution (default: 4)" << endl;
+            cout << string(14, ' ') << "-z <int>, --scale <int>" << endl;
+            cout << string(17, ' ') << "color discretization scale (default: 256)" << endl;
+            cout << string(14, ' ') << "-t <double>, --threshold <double>" << endl;
             cout << string(17, ' ') << "NN threshold (default: 0.75)" << endl;
+            cout << string(14, ' ') << "-u <double>, --uppermark <double>" << endl;
+            cout << string(17, ' ') << "NN rams saturation limit (default: 50)" << endl;
+            cout << string(14, ' ') << "-w <double>, --watermark <double>" << endl;
+            cout << string(17, ' ') << "NN rams firing threshold (default: 0)" << endl;
+            cout << string(14, ' ') << "-k <int>, --cap <int>" << endl;
+            cout << string(17, ' ') << "color repetition time (default: 2)" << endl;
+            cout << string(14, ' ') << "-h, --help" << endl;
+            cout << string(17, ' ') << "display this help" << endl;
+            cout << string(14, ' ') << "-v, --verbose" << endl;
+            cout << string(17, ' ') << "display system and video configuration" << endl;
+            cout << string(14, ' ') << "-r, --reverse" << endl;
+            cout << string(17, ' ') << "process video also in reverse mode" << endl;
             //[-p <int:int>] [-x <png|jpg>]" << endl;
             return 0;
         } else if (*i == "-v" || *i == "--verbose") {
-            verboseSwitch = true;
+            verboseFlag = true;
+        } else if (*i == "-r" || *i == "--reverse") {
+            reverseFlag = true;
         } else if (*i == "-i" || *i == "--indir") {
             indirname = *++i;
             int pos;
@@ -191,12 +205,15 @@ int main(int argc, char** argv) {
             }
         } else if (*i == "-o" || *i == "--outdir") {
             outdirname = *++i;
+            outflag = true;
             if ((op = opendir (outdirname.c_str())) == NULL) {
                 cerr << "Parse error: Could not open output dir" << endl;
                 exit(-1);
             }
         } else if (*i == "-m" || *i == "--mode") {
             coding = *++i;
+        } else if (*i == "-k" || *i == "--cap") {
+            selectthresh = atoi((*++i).c_str());
         } else if (*i == "-x" || *i == "--extension") {
             extArg = *++i;
             if (extArg != "jpg" && extArg != "png" ) {
@@ -206,6 +223,10 @@ int main(int argc, char** argv) {
             }
         } else if (*i == "-b" || *i == "--bits") {
             nbit = atoi((*++i).c_str());
+        } else if (*i == "-w" || *i == "--watermark") {
+            watermark = (double)atof((*++i).c_str());
+        } else if (*i == "-u" || *i == "--uppermark") {
+            uppermark = (double)atof((*++i).c_str());
         } else if (*i == "-z" || *i == "--scale") {
             ntics = atoi((*++i).c_str());
         } else if (*i == "-t" || *i == "--threshold") {
@@ -258,7 +279,7 @@ int main(int argc, char** argv) {
     cout << "Processing Video (" << w << "x" << h << ")" << endl;
 
     Ptr<BackgroundSubtractorWIS> Subtractor;
-    Subtractor = createBackgroundSubtractorWIS(frame.size(), frame.type());
+    Subtractor = createBackgroundSubtractorWIS();
     Subtractor->set("noBits", nbit);
     Subtractor->set("noTics", ntics);
     Subtractor->set("trainIncr", incr);
@@ -269,7 +290,8 @@ int main(int argc, char** argv) {
     Subtractor->set("varUpWatermark", uppermark);
     Subtractor->set("selectThreshold", selectthresh);
     Subtractor->set("learningStage", learntime);
-    if (verboseSwitch) {
+    Subtractor->initialize(frame.size(), frame.type());
+    if (verboseFlag) {
         cout << left << setw(MAXWIDTH) << setfill(filler) << "I/O GRAPHICS PARAMS" << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Video Coding" << ": " << coding << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Input Directory" << ": " << indirname << endl;
@@ -277,9 +299,18 @@ int main(int argc, char** argv) {
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Blur" << ": " << blurFlag << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Erosion" << ": " << erosionFlag << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Dilation" << ": " << dilationFlag << endl;
-        cout << left << setw(MAXWIDTH) << setfill(filler) << "Reverse" << ": " << reverseTimes << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Reverse" << ": " << reverseFlag << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "WISARD DETECTOR PARAMS" << endl;
-        Subtractor->printinfo(MAXWIDTH);
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "noBits: " << Subtractor->getInt("noBits") << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "noTics: " << Subtractor->getInt("noTics") << "(" << Subtractor->getInt("dimTics") << ")" << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "noRams: " << Subtractor->getInt("noRams") <<  endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Train Policy: " << Subtractor->getDouble("trainIncr") << ":" << Subtractor->getDouble("trainDecr") <<  endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Classification Thresh: " << Subtractor->getDouble("varThreshold") << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Selection Thresh: " << Subtractor->getInt("selectThreshold") << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Watermark: " << Subtractor->getDouble("varWatermark") << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Uppermark: " << Subtractor->getDouble("varUpWatermark") << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "LearningStage: " << Subtractor->getInt("learningStage") << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Cachesize: " << Subtractor->getInt("cacheSize") << endl;
     }
     
     // Open Video Stream and get properties
@@ -349,11 +380,12 @@ int main(int argc, char** argv) {
         titlelist.push_back(make_pair(titledownright,Point(wskip*2+w,hskip*2+h-5)));
         showImages(outFrame, imglist, titlelist);
         waitKey(1);
-        if (outflag) imwrite(outdirname + format("/out_%06d.png",frameidx), outFrame);
         frameidx += plus;
-        if (reverseTimes > 0 && frameidx == dcnt) { reverseTimes--; plus = -plus; frameidx--;frameidx--;};  // reverse
-        if (reverseTimes > 0 && frameidx < 0) { reverseTimes--; plus = -plus; frameidx++;frameidx++; };  // reverse
+        if (reverseFlag and frameidx == dcnt) { plus = -1; frameidx--; frameidx--; };  // reverse
+        //if (reverseTimes > 0 && frameidx == dcnt) { reverseTimes--; plus = -plus; frameidx--;frameidx--;};  // reverse
+        //if (reverseTimes > 0 && frameidx < 0) { reverseTimes--; plus = -plus; frameidx++;frameidx++; };  // reverse
     }
+    if (outflag) imwrite(outdirname + "/BC_" + videoname + ".png", bgmodel);
 }
 
 
