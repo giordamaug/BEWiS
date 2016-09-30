@@ -54,7 +54,7 @@ $ cmake .
 
 $ make
 
-$ bewis  -i <inputidr>
+$ bewis  -i \<inputidr\>
 
 
 
