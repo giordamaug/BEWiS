@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
     string outdirname = ".";
     string extArg = "png";
     string coding = "RGB";
-    int nbit = 4, ntics = 256, learntime = 0, cachesize = 20;
+    int nbit = 4, ntics = 256, learntime = 1, cachesize = 20;
     string policy = "1:1";
     double watermark = 0.0, uppermark = 50.0, thresh = 0.75;
     int selectthresh = 2;
@@ -179,6 +179,8 @@ int main(int argc, char** argv) {
             cout << string(17, ' ') << "NN rams firing threshold (default: 0)" << endl;
             cout << string(14, ' ') << "-k <int>, --cap <int>" << endl;
             cout << string(17, ' ') << "color repetition time (default: 2)" << endl;
+            cout << string(14, ' ') << "-l <int>, --learntime <int>" << endl;
+            cout << string(17, ' ') << "pre-learning time (in no of frames) (default: 1)" << endl;
             cout << string(14, ' ') << "-h, --help" << endl;
             cout << string(17, ' ') << "display this help" << endl;
             cout << string(14, ' ') << "-v, --verbose" << endl;
@@ -229,6 +231,8 @@ int main(int argc, char** argv) {
             uppermark = (double)atof((*++i).c_str());
         } else if (*i == "-z" || *i == "--scale") {
             ntics = atoi((*++i).c_str());
+        } else if (*i == "-l" || *i == "--learntime") {
+            learntime = atoi((*++i).c_str());
         } else if (*i == "-t" || *i == "--threshold") {
             thresh = (double)atof((*++i).c_str());
         } else if (*i == "-p" || *i == "--policy") {
