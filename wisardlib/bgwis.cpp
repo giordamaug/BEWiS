@@ -33,7 +33,7 @@ namespace cv {
     static const double defaultVarWatermark = 0.0;
     static const double defaultVarUpWatermark = 50.0;
     static const int defaultSelectThreshold = 2;
-    static const int defaultLearningStage = 0;
+    static const int defaultLearningStage = 1;
 
     class BackgroundSubtractorWISImpl : public BackgroundSubtractorWIS {
         public:
@@ -137,7 +137,7 @@ namespace cv {
                             //if (wram_get(discr[neuron],cache->tuple[neuron]) > varWatermark) {
                             //    sum++;
                             //}
-                            if (learningStage >= 0 || cache->weight > selectThreshold) keys[neuron] = wram_up_key_down_rest(discr[neuron], cache->tuple[neuron],trainIncr,trainDecr,varUpWatermark);
+                            if (learningStage > 0 || cache->weight > selectThreshold) keys[neuron] = wram_up_key_down_rest(discr[neuron], cache->tuple[neuron],trainIncr,trainDecr,varUpWatermark);
                         }
                         
                         // update output mask
@@ -150,7 +150,7 @@ namespace cv {
                         
                     }
                 }
-                if (learningStage >= 0) {
+                if (learningStage > 0) {
                     learningStage--;
                 }
                 fgmask.copyTo(_fgmask);
