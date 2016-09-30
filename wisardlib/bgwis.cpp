@@ -150,7 +150,7 @@ namespace cv {
                         
                     }
                 }
-                if (learningStage > 0) {
+                if (learningStage >= 0) {
                     learningStage--;
                 }
                 fgmask.copyTo(_fgmask);
