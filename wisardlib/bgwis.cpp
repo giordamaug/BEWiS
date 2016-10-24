@@ -131,12 +131,8 @@ namespace cv {
                         wiznet->cachearray[j*image.cols + i] = cache;
                         color = maxcolor[j*image.cols + i];
                         keys = maxkeys[j*image.cols + i];
-                        // classify
-                        //sum = 0;
+                        // train
                         for (int neuron=0;neuron<noRams;neuron++) {
-                            //if (wram_get(discr[neuron],cache->tuple[neuron]) > varWatermark) {
-                            //    sum++;
-                            //}
                             if (learningStage > 0 || cache->weight > selectThreshold) keys[neuron] = wram_up_key_down_rest(discr[neuron], cache->tuple[neuron],trainIncr,trainDecr,varUpWatermark);
                         }
                         
@@ -302,11 +298,9 @@ namespace cv {
                 tcount ++;
                 for (;;) {
                     if (p->cr == cr && p->cg == cg && p->cb == cb) {  // cache hit (move found in front)
-                        //printf("HIT:  ");
                         hits++;
                         if (p == cache) {  // hit and in front
-                            cache->weight += cache->idx; // BUG fixed !
-                            //cache->weight = cache->idx;
+                            cache->weight += cache->idx;
                             cache->idx++;
                         } else {            // hit and not in front (move to front)
                             prec->next = p->next;   // remove item
@@ -315,7 +309,6 @@ namespace cv {
                             p->prev = cache->prev;
                             p->next = cache;
                             cache->prev = p;
-                            //p->weight = 0; // BUG fixed !
                             p->idx = 1;
                             cache = p;
                         }
@@ -323,7 +316,6 @@ namespace cv {
                     }
                     if (p->next == cache) {
                         // move top on first non-empty
-                        //printf("MISS: ");
                         misses++;
                         cache = cache->prev;
                         cache->cr = cr;
