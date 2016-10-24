@@ -186,7 +186,6 @@ int main(int argc, char** argv) {
             cout << string(17, ' ') << "display system and video configuration" << endl;
             cout << string(14, ' ') << "-r, --reverse" << endl;
             cout << string(17, ' ') << "process video also in reverse mode" << endl;
-            //[-p <int:int>] [-x <png|jpg>]" << endl;
             return 0;
         } else if (*i == "-v" || *i == "--verbose") {
             verboseFlag = true;
