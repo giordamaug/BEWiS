@@ -109,7 +109,6 @@ void showImages(Mat &dispimg, list< pair < Mat, Rect > > imglist, list< pair < s
     for (std::list< pair < string, Point > >::const_iterator it = tlist.begin(); it != tlist.end(); ++it) {
         putText(dispimg,(*it).first,(*it).second,CV_FONT_HERSHEY_PLAIN,1.0,Scalar(255,255,255));
     }
-    //putText(dispimg,buffer,Point(pos.x,pos.y+2*(tsize.height+5)),CV_FONT_HERSHEY_PLAIN,1.0,Scalar(255,255,255));
     imshow(WinTitle,dispimg);
 }
 
@@ -321,11 +320,9 @@ int main(int argc, char** argv) {
     fps = 30;
     mfps = (int)fps;
     // Create output display and its geometry
-    //int hskip = 20, wskip = 40;
     int hskip = 16, wskip = 4;
     int dcols = 2;
     Mat outFrame(2*h+2*hskip+wskip,w*dcols+(dcols+1)*wskip,CV_8UC3,bgcolor);
-    //Mat outFrame(h+2*hskip+wskip,w*dcols+(dcols+1)*wskip,CV_8UC3,bgcolor);
     
     // create window an put icons
     cvNamedWindow(WinTitle.c_str(),CV_WINDOW_AUTOSIZE);
@@ -386,8 +383,6 @@ int main(int argc, char** argv) {
         waitKey(1);
         frameidx += plus;
         if (reverseFlag and frameidx == dcnt) { plus = -1; frameidx--; frameidx--; };  // reverse
-        //if (reverseTimes > 0 && frameidx == dcnt) { reverseTimes--; plus = -plus; frameidx--;frameidx--;};  // reverse
-        //if (reverseTimes > 0 && frameidx < 0) { reverseTimes--; plus = -plus; frameidx++;frameidx++; };  // reverse
     }
     if (outflag) imwrite(outdirname + "/BC_" + videoname + ".png", bgmodel);
 }
