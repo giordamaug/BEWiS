@@ -320,8 +320,9 @@ int main(int argc, char** argv) {
     mfps = (int)fps;
     // Create output display and its geometry
     int hskip = 16, wskip = 4;
-    int dcols = 2;
-    Mat outFrame(2*h+2*hskip+wskip,w*dcols+(dcols+1)*wskip,CV_8UC3,bgcolor);
+    int dcols = 3;
+    //Mat outFrame(2*h+2*hskip+wskip,w*dcols+(dcols+1)*wskip,CV_8UC3,bgcolor);
+    Mat outFrame(h+hskip+wskip,w*dcols+(dcols+1)*wskip,CV_8UC3,bgcolor);
     
     // create window an put icons
     cvNamedWindow(WinTitle.c_str(),CV_WINDOW_AUTOSIZE);
@@ -374,10 +375,11 @@ int main(int argc, char** argv) {
         titlelist.push_back(make_pair(titleupleft + format("%05d",frameidx),Point(wskip,hskip-5)));
         imglist.push_back(make_pair(bgmodel,Rect(Point(wskip*2+w,hskip-2),Size(w,h))));  // bgmodel (Up right)
         titlelist.push_back(make_pair(titleupright,Point(wskip*2+w,hskip-5)));
-        imglist.push_back(make_pair(deltaimg,Rect(Point(wskip,hskip*2+h-2),Size(w,h))));  // difference  (Down left)
-        titlelist.push_back(make_pair(titledownleft,Point(wskip,hskip*2+h-5)));
-        imglist.push_back(make_pair(fgdetected,Rect(Point(wskip*2+w,hskip*2+h),Size(w,h)))); // detected (Down right)
-        titlelist.push_back(make_pair(titledownright,Point(wskip*2+w,hskip*2+h-5)));
+        imglist.push_back(make_pair(deltaimg,Rect(Point(wskip*3+2*w,hskip-2),Size(w,h))));  // bgmodel (Up right)
+        //imglist.push_back(make_pair(deltaimg,Rect(Point(wskip,hskip*2+h-2),Size(w,h))));  // difference  (Down left)
+        titlelist.push_back(make_pair(titledownleft,Point(wskip*3+2*w,hskip-5)));
+        //imglist.push_back(make_pair(fgdetected,Rect(Point(wskip*2+w,hskip*2+h),Size(w,h)))); // detected (Down right)
+        //titlelist.push_back(make_pair(titledownright,Point(wskip*2+w,hskip*2+h-5)));
         showImages(outFrame, imglist, titlelist);
         waitKey(1);
         frameidx += plus;
