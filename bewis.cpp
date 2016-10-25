@@ -142,6 +142,7 @@ int main(int argc, char** argv) {
     struct timeval t0, t1, t2;
     
     // Set Command Line Parser
+    bool displayFlag = false;
     bool movieinput = false;
     bool verboseFlag = false;
     bool erosionFlag = false; bool blurFlag = false;
@@ -184,13 +185,17 @@ int main(int argc, char** argv) {
             cout << string(CHARSKIP1, ' ') << "display this help" << endl;
             cout << string(CHARSKIP2, ' ') << "-v, --verbose" << endl;
             cout << string(CHARSKIP1, ' ') << "display system and video configuration" << endl;
+            cout << string(CHARSKIP2, ' ') << "-x, --display" << endl;
+            cout << string(CHARSKIP1, ' ') << "enable graphic display (default: disabled)" << endl;
             cout << string(CHARSKIP2, ' ') << "-r, --reverse" << endl;
-            cout << string(CHARSKIP1, ' ') << "process video also in reverse mode" << endl;
+            cout << string(CHARSKIP1, ' ') << "process video also in reverse mode (default: disabled)" << endl;
             return 0;
         } else if (*i == "-v" || *i == "--verbose") {
             verboseFlag = true;
         } else if (*i == "-r" || *i == "--reverse") {
             reverseFlag = true;
+        } else if (*i == "-x" || *i == "--display") {
+            displayFlag = true;
         } else if (*i == "-g" || *i == "--blur") {
             blurFlag = true;
         } else {
@@ -349,17 +354,19 @@ int main(int argc, char** argv) {
         cvtColor(deltaimg,deltaimg,CV_GRAY2BGR,3);
         
         // build up display
-        outFrame.setTo(bgcolor);
-        imglist.clear();
-        titlelist.clear();
-        imglist.push_back(make_pair(frame,Rect(Point(wskip,hskip-2),Size(w,h))));  // original frame (Up left)
-        titlelist.push_back(make_pair(titleupleft + format("%05d",frameidx),Point(wskip,hskip-5)));
-        imglist.push_back(make_pair(bgmodel,Rect(Point(wskip*2+w,hskip-2),Size(w,h))));  // bgmodel (Up right)
-        titlelist.push_back(make_pair(titleupright,Point(wskip*2+w,hskip-5)));
-        imglist.push_back(make_pair(deltaimg,Rect(Point(wskip*3+2*w,hskip-2),Size(w,h))));  // bgmodel (Up right)
-        titlelist.push_back(make_pair(titledownleft,Point(wskip*3+2*w,hskip-5)));
-        showImages(outFrame, imglist, titlelist);
-        waitKey(1);
+        if (displayFlag) {
+            outFrame.setTo(bgcolor);
+            imglist.clear();
+            titlelist.clear();
+            imglist.push_back(make_pair(frame,Rect(Point(wskip,hskip-2),Size(w,h))));  // original frame (Up left)
+            titlelist.push_back(make_pair(titleupleft + format("%05d",frameidx),Point(wskip,hskip-5)));
+            imglist.push_back(make_pair(bgmodel,Rect(Point(wskip*2+w,hskip-2),Size(w,h))));  // bgmodel (Up right)
+            titlelist.push_back(make_pair(titleupright,Point(wskip*2+w,hskip-5)));
+            imglist.push_back(make_pair(deltaimg,Rect(Point(wskip*3+2*w,hskip-2),Size(w,h))));  // bgmodel (Up right)
+            titlelist.push_back(make_pair(titledownleft,Point(wskip*3+2*w,hskip-5)));
+            showImages(outFrame, imglist, titlelist);
+            waitKey(1);
+        }
         if (forward) { ++frameidx; ++it; } else { --frameidx; --it;}
         /* If iterator is at the end - check reverse mode (otherwise exit loop) */
         if (it == end) {
@@ -371,6 +378,7 @@ int main(int argc, char** argv) {
         }
         gettimeofday(&t2,NULL);
         rfps = (int)(1.0 / ((double) (t2.tv_usec - t1.tv_usec)/1000000 + (double) (t2.tv_sec - t1.tv_sec)));
+        cout << '\r' << "Processing Frame " << std::setfill('0') << frameidx << "/" << numframes << std::flush;
     } while (!stop);
     // Print timing statistics and BG
     cout << "Processed at " << rfps << " FPS - Total time " << (t2.tv_sec - t0.tv_sec) << " sec"<< endl;
