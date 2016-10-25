@@ -381,7 +381,7 @@ int main(int argc, char** argv) {
         cout << '\r' << "Processing Frame " << std::setfill('0') << frameidx << "/" << numframes << std::flush;
     } while (!stop);
     // Print timing statistics and BG
-    cout << "Processed at " << rfps << " FPS - Total time " << (t2.tv_sec - t0.tv_sec) << " sec"<< endl;
+    cout << "\nProcessed at " << rfps << " FPS - Total time " << (t2.tv_sec - t0.tv_sec) << " sec"<< endl;
     if (outflag) imwrite(outfilename, bgmodel);
 }
 
