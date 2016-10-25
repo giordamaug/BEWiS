@@ -323,7 +323,7 @@ int main(int argc, char** argv) {
     Mat outFrame(h+hskip+wskip,w*dcols+(dcols+1)*wskip,CV_8UC3,bgcolor);
     
     // Create window an put icons
-    cvNamedWindow(WinTitle.c_str(),CV_WINDOW_AUTOSIZE);
+    if (displayFlag) cvNamedWindow(WinTitle.c_str(),CV_WINDOW_AUTOSIZE);
     
     // Video processing loop
     FramesVec::const_iterator begin = frames.begin();
