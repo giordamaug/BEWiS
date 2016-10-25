@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 # change paths to your C++ compiler
 set( CMAKE_C_COMPILER /opt/local/bin/gcc-mp-5 )
 set( CMAKE_CXX_COMPILER /opt/local/bin/g++-mp-5 )
