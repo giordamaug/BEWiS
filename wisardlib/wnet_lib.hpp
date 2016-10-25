@@ -12,6 +12,7 @@
 
 #include <utility>
 #include <stdlib.h>
+#include <stdio.h>
 
 extern long int wcounter;
 
