@@ -9,6 +9,14 @@ project( bewis )
 # Find OpenCV
 find_package(OpenCV REQUIRED)
 
+# Find OpenMP
+find_package(OpenMP)
+
+if(OPENMP_FOUND)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+
 # Build wizard Library
 # Build bemis program
 set(BGWIZSRC_NAME wisardlib/bgwis.cpp)
