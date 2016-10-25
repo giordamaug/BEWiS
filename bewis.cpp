@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
     // Set Command Line Parser
     bool movieinput = false;
     bool verboseFlag = false;
-    bool erosionFlag = false; bool blurFlag = false; bool dilationFlag = false;
+    bool erosionFlag = false; bool blurFlag = false;
     bool reverseFlag = false;
     int w,h;
     string videofile = "prova.avi";
@@ -166,8 +166,6 @@ int main(int argc, char** argv) {
             cout << string(CHARSKIP1, ' ') << "color mode (default: RGB)" << endl;
             cout << string(CHARSKIP2, ' ') << "-p <int:int>, --policy <int:int>" << endl;
             cout << string(CHARSKIP1, ' ') << "NN policy (default: 1:1)" << endl;
-            cout << string(CHARSKIP2, ' ') << "-x <png|jpg>, --extension <png|jpg>" << endl;
-            cout << string(CHARSKIP1, ' ') << "image format (default: png)" << endl;
             cout << string(CHARSKIP2, ' ') << "-b <int>, --bits <int>" << endl;
             cout << string(CHARSKIP1, ' ') << "NN bit resolution (default: 4)" << endl;
             cout << string(CHARSKIP2, ' ') << "-z <int>, --scale <int>" << endl;
@@ -193,42 +191,40 @@ int main(int argc, char** argv) {
             verboseFlag = true;
         } else if (*i == "-r" || *i == "--reverse") {
             reverseFlag = true;
-        } else if (*i == "-i" || *i == "--input") {
-            videofile = *++i;
+        } else if (*i == "-g" || *i == "--blur") {
+            blurFlag = true;
+        } else {
+        string arg = *i;
+        if (++i == args.end()) {cout << "Parse error: wrong argument syntax" << endl; exit(-1);}
+        if ((arg == "-i" || arg == "--input")) {
+            videofile = *i;
             int pos;
             if ((pos = videofile.find_last_of("/\\")) == videofile.size() - 1) {
                 videofile = videofile.substr(0,videofile.size()-1);
                 pos = videofile.find_last_of("/\\");
             }
             videoname = videofile.substr(pos+1);
-        } else if (*i == "-o" || *i == "--outfile") {
-            outfilename = *++i;
+        } else if ((arg == "-o" || arg == "--outfile")) {
+            outfilename = *i;
             outflag = true;
-        } else if (*i == "-m" || *i == "--mode") {
-            coding = *++i;
-        } else if (*i == "-k" || *i == "--cap") {
-            selectthresh = atoi((*++i).c_str());
-        } else if (*i == "-x" || *i == "--extension") {
-            extArg = *++i;
-            if (extArg != "jpg" && extArg != "png" ) {
-                cerr << "Parse error: Argument: -x" << endl;
-                cerr << string(13, ' ') << "Image extension must be png|jpg" << endl;
-                exit(-1);
-            }
-        } else if (*i == "-b" || *i == "--bits") {
-            nbit = atoi((*++i).c_str());
-        } else if (*i == "-w" || *i == "--watermark") {
-            watermark = (double)atof((*++i).c_str());
-        } else if (*i == "-u" || *i == "--uppermark") {
+        } else if (arg == "-m" || arg == "--mode") {
+            coding = *i;
+        } else if (arg == "-k" || arg == "--cap") {
+            selectthresh = atoi((*i).c_str());
+        } else if (arg == "-b" || arg == "--bits") {
+            nbit = atoi((*i).c_str());
+        } else if (arg == "-w" || arg == "--watermark") {
+            watermark = (double)atof((*i).c_str());
+        } else if (arg == "-u" || arg == "--uppermark") {
             uppermark = (double)atof((*++i).c_str());
-        } else if (*i == "-z" || *i == "--scale") {
-            ntics = atoi((*++i).c_str());
-        } else if (*i == "-l" || *i == "--learntime") {
-            learntime = atoi((*++i).c_str());
-        } else if (*i == "-t" || *i == "--threshold") {
-            thresh = (double)atof((*++i).c_str());
-        } else if (*i == "-p" || *i == "--policy") {
-            policy = *++i;
+        } else if (arg == "-z" || arg == "--scale") {
+            ntics = atoi((*i).c_str());
+        } else if (arg == "-l" || arg == "--learntime") {
+            learntime = atoi((*i).c_str());
+        } else if (*i == "-t" || arg == "--threshold") {
+            thresh = (double)atof((*i).c_str());
+        } else if (arg == "-p" || arg == "--policy") {
+            policy = *i;
             if ((err = parsePolicy(policy,incr,decr)) < 0) {
                 cerr << "Parse error: Argument: -w" << endl;
                 cerr << string(13, ' ') << "policy setting must be <int>:<int>" << endl;
@@ -237,6 +233,7 @@ int main(int argc, char** argv) {
         } else {
             cout << "Parse error: wrong argument syntax" << endl;
             exit(-1);
+        }
         }
     }
     
@@ -298,12 +295,10 @@ int main(int argc, char** argv) {
     if (verboseFlag) {
         cout << left << setw(MAXWIDTH) << setfill(filler) << "I/O GRAPHICS PARAMS" << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Video Coding" << ": " << coding << endl;
-        cout << left << setw(MAXWIDTH) << setfill(filler) << "Input Directory" << ": " << videofile << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Video Name" << ": " << videoname << endl;
-        cout << left << setw(MAXWIDTH) << setfill(filler) << "Blur" << ": " << blurFlag << endl;
-        cout << left << setw(MAXWIDTH) << setfill(filler) << "Erosion" << ": " << erosionFlag << endl;
-        cout << left << setw(MAXWIDTH) << setfill(filler) << "Dilation" << ": " << dilationFlag << endl;
-        cout << left << setw(MAXWIDTH) << setfill(filler) << "Reverse" << ": " << reverseFlag << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Output file" << ": " << outfilename << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Blur" << ": " << (blurFlag ? "enabled" : "diasbled") << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Reverse" << ": " << (reverseFlag ? "enabled" : "diasbled") << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "WISARD DETECTOR PARAMS" << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "noBits: " << Subtractor->getInt("noBits") << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "noTics: " << Subtractor->getInt("noTics") << "(" << Subtractor->getInt("dimTics") << ")" << endl;
@@ -340,9 +335,6 @@ int main(int argc, char** argv) {
         
         Subtractor->apply(frame, tmpMask);  // update Background Model (training)
         Subtractor->getBackgroundImage(bgmodel); // get Background Model
-        
-        if (erosionFlag) { erode(tmpMask,tmpMask,cv::Mat()); }
-        if (dilationFlag){ dilate(tmpMask,tmpMask,cv::Mat());}
         
         // back convert for display
         backconvert(frame,frame);
