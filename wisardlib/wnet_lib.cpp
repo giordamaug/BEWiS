@@ -38,7 +38,6 @@ void wram_set(wentry_t *m, wkey_t key,wvalue_t value) {
         }
         // the key already exists (update)
         if (key == p->key) {
-            //printf("key matched\n");
             // delete item if value is null
             if (value==0) {
                 (p->prev)->next = p->next;
@@ -50,7 +49,6 @@ void wram_set(wentry_t *m, wkey_t key,wvalue_t value) {
         // the key does not exist (insertion)
         } else {
             wcounter++;
-            //printf("new key\n");
             newp = (wentry_t *)malloc(sizeof(wentry_t));            
             newp->key = key;
             newp->value = value;
@@ -71,7 +69,6 @@ void wram_del(wentry_t *m, wkey_t key) {
     for (;;) {
         p = p->next;
         if (key == p->key) {
-            printf("delete key\n");
             (p->prev)->next = p->next;
             (p->next)->prev = p->prev;
             free(p);
@@ -108,12 +105,10 @@ void wram_set_or_incr(wentry_t *m, wkey_t key, wvalue_t value, wvalue_t incr) {
     }
     // the key already exists (update)
     if (key == p->key) {
-        //printf("key matched\n");
         p->value += incr;
         // the key does not exist (insertion)
     } else {
         wcounter++;
-        //printf("new key\n");
         newp = (wentry_t *)malloc(sizeof(wentry_t));
         newp->key = key;
         newp->value = value;
@@ -139,12 +134,10 @@ void wram_incr(wentry_t *m, wkey_t key,  wvalue_t incr) {
     }
     // the key already exists (update)
     if (key == p->key) {
-        //printf("key matched\n");
         p->value += incr;
         // the key does not exist (insertion)
     } else {
         wcounter++;
-        //printf("new key\n");
         newp = (wentry_t *)malloc(sizeof(wentry_t));
         newp->key = key;
         newp->value = incr;
@@ -170,12 +163,10 @@ void wram_incr_top(wentry_t *m, wkey_t key, wvalue_t incr, wvalue_t top) {
     }
     // the key already exists (update)
     if (key == p->key) {
-        //printf("key matched\n");
         if ((p->value + incr) < top) p->value += incr;
         // the key does not exist (insertion)
     } else {
         wcounter++;
-        //printf("new key\n");
         newp = (wentry_t *)malloc(sizeof(wentry_t));
         newp->key = key;
         newp->value = incr;
@@ -199,13 +190,11 @@ void wram_decr(wentry_t *m,wkey_t key) {
         if (key == p->key) {
             if ((p->value - (wvalue_t)1) <= 0) {
                 // remove entry
-                //printf("delete key\n");
                 (p->prev)->next = p->next;
                 (p->next)->prev = p->prev;
                 free(p);
             } else {
                 // decrease the entry
-                //printf("decr 1 key\n");
                 p->value -= (wvalue_t)1;
             }
             break;
@@ -224,7 +213,6 @@ void wram_decr_all_but_key(wentry_t *m, wkey_t key, wvalue_t incr, wvalue_t decr
         if (p ==m) break;
         if (key == p->key) {  // the key exists (increase it!)
             notfound = false;
-            //printf("key matched\n");
             p->value += incr;
         } else {              // the key does not match (decrease it!)
             if ((p->value - decr) < 1) {
@@ -350,7 +338,6 @@ void wram_decr_all_but_key_top(wentry_t *m, wkey_t key, wvalue_t incr, wvalue_t 
         if (p ==m) break;
         if (key == p->key) {  // the key exists (increase it!)
             notfound = false;
-            //printf("key matched\n");
             if ((p->value + incr) < top) p->value += incr;
         } else {              // the key does not match (decrease it!)
             if ((p->value - decr) < 1) {
@@ -391,13 +378,11 @@ void wram_decr_or_del(wentry_t *m,wkey_t key,wvalue_t decr) {
         if (key == p->key) {
             if ((p->value - decr) <= 0) {
                 // remove entry
-                printf("delete key\n");
                 (p->prev)->next = p->next;
                 (p->next)->prev = p->prev;
                 free(p);
             } else {
                 // decrease the entry
-                printf("decr 1 key\n");
                 p->value -= decr;
             }
             break;
@@ -486,12 +471,12 @@ void wram_free(wentry_t *m) {
 
 void intuple_print(wkey_t *vector, long size) {
     long i;
-    printf("[");
+    fprintf(stdout,"[");
     for (i = 0; i < size; i++) {
-        if (vector[i]) printf("%li", vector[i]);
-        if (i != size -1) printf(".");
+        if (vector[i]) fprintf(stdout,"%li", vector[i]);
+        if (i != size -1) fprintf(stdout,".");
     }
-    printf("]\n");
+    fprintf(stdout,"]\n");
 }
 
 
