@@ -26,11 +26,15 @@
 #include <opencv2/video/background_segm.hpp>
 
 #include <bgwis.hpp>
+#include <sys/stat.h>
 
 using namespace cv;
 using namespace std;
 
 int MAXWIDTH = 30;
+int CHARSKIP1 = 17;
+int CHARSKIP2 = 14;
+
 char filler = ' ';
 // String Tokenizer
 vector<string> tokenizer(string str, char delimiter) {
@@ -40,6 +44,18 @@ vector<string> tokenizer(string str, char delimiter) {
         v.push_back(token);
     }
     return v;
+}
+
+bool is_file(const char* path) {
+    struct stat buf;
+    stat(path, &buf);
+    return S_ISREG(buf.st_mode);
+}
+
+bool is_dir(const char* path) {
+    struct stat buf;
+    stat(path, &buf);
+    return S_ISDIR(buf.st_mode);
 }
 
 int parsePolicy(string settings,double &incr, double &decr) {
