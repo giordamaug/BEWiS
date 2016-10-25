@@ -94,7 +94,7 @@ Mat& discretize(Mat& I, int dimTics) {
         for ( j = 0; j < nCols; ++j)
         {
             p[j] = (unsigned char) ((p[j] / dimTics) * dimTics);
-;
+            ;
         }
     }
     return I;
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
     // Parse commands globs
     DIR *dp, *op;   // input dir
     FILE *fp;
-    int dcnt;
+    int numframes;
     vector<string> dlist = vector<string>();
     string videoname;
     double incr=1.0, decr=1.0;
@@ -136,17 +136,19 @@ int main(int argc, char** argv) {
     void (*convert)(Mat, Mat &);
     void (*backconvert)(Mat, Mat &);
     string titleupleft, titleupright="BG Model", titledownleft="Diff |Input-BG|", titledownright="FG Detection";
-
+    
     // Timing globs
-    double fps, rfps, mfps=-2;
-    struct timeval t1, t2;
+    double fps, rfps;
+    struct timeval t0, t1, t2;
     
     // Set Command Line Parser
+    bool movieinput = false;
     bool verboseFlag = false;
     bool erosionFlag = false; bool blurFlag = false; bool dilationFlag = false;
     bool reverseFlag = false;
-    string indirname = ".";
-    string outdirname = ".";
+    int w,h;
+    string videofile = "prova.avi";
+    string outfilename = "bg.png";
     string extArg = "png";
     string coding = "RGB";
     int nbit = 4, ntics = 256, learntime = 1, cachesize = 20;
@@ -156,60 +158,52 @@ int main(int argc, char** argv) {
     vector<string> args(argv + 1, argv + argc);
     for (vector<string>::iterator i = args.begin(); i != args.end(); ++i) {
         if (*i == "-h" || *i == "--help") {
-            cout << "Syntax: bewis -i <indir>" << endl;
-            cout << string(17, ' ') << "image input folder" << endl;
-            cout << string(14, ' ') << "-o <outdir>, --outdir <outdir>" << endl;
-            cout << string(17, ' ') << "BG output folder" << endl;
-            cout << string(14, ' ') << "-m <RGB|Lab|HUV>, --mode <RGB|Lab|HUV>" << endl;
-            cout << string(17, ' ') << "color mode (default: RGB)" << endl;
-            cout << string(14, ' ') << "-p <int:int>, --policy <int:int>" << endl;
-            cout << string(17, ' ') << "NN policy (default: 1:1)" << endl;
-            cout << string(14, ' ') << "-x <png|jpg>, --extension <png|jpg>" << endl;
-            cout << string(17, ' ') << "image format (default: png)" << endl;
-            cout << string(14, ' ') << "-b <int>, --bits <int>" << endl;
-            cout << string(17, ' ') << "NN bit resolution (default: 4)" << endl;
-            cout << string(14, ' ') << "-z <int>, --scale <int>" << endl;
-            cout << string(17, ' ') << "color discretization scale (default: 256)" << endl;
-            cout << string(14, ' ') << "-t <double>, --threshold <double>" << endl;
-            cout << string(17, ' ') << "NN threshold (default: 0.75)" << endl;
-            cout << string(14, ' ') << "-u <double>, --uppermark <double>" << endl;
-            cout << string(17, ' ') << "NN rams saturation limit (default: 50)" << endl;
-            cout << string(14, ' ') << "-w <double>, --watermark <double>" << endl;
-            cout << string(17, ' ') << "NN rams firing threshold (default: 0)" << endl;
-            cout << string(14, ' ') << "-k <int>, --cap <int>" << endl;
-            cout << string(17, ' ') << "color repetition time (default: 2)" << endl;
-            cout << string(14, ' ') << "-l <int>, --learntime <int>" << endl;
-            cout << string(17, ' ') << "pre-learning time (in no of frames) (default: 1)" << endl;
-            cout << string(14, ' ') << "-h, --help" << endl;
-            cout << string(17, ' ') << "display this help" << endl;
-            cout << string(14, ' ') << "-v, --verbose" << endl;
-            cout << string(17, ' ') << "display system and video configuration" << endl;
-            cout << string(14, ' ') << "-r, --reverse" << endl;
-            cout << string(17, ' ') << "process video also in reverse mode" << endl;
+            cout << "Syntax: bewis -i <infile>" << endl;
+            cout << string(CHARSKIP1, ' ') << "video file (or first frame filename of sequence)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-o <outfile>, --outfile <outfile>" << endl;
+            cout << string(CHARSKIP1, ' ') << "BG output filename" << endl;
+            cout << string(CHARSKIP2, ' ') << "-m <RGB|Lab|HUV>, --mode <RGB|Lab|HUV>" << endl;
+            cout << string(CHARSKIP1, ' ') << "color mode (default: RGB)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-p <int:int>, --policy <int:int>" << endl;
+            cout << string(CHARSKIP1, ' ') << "NN policy (default: 1:1)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-x <png|jpg>, --extension <png|jpg>" << endl;
+            cout << string(CHARSKIP1, ' ') << "image format (default: png)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-b <int>, --bits <int>" << endl;
+            cout << string(CHARSKIP1, ' ') << "NN bit resolution (default: 4)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-z <int>, --scale <int>" << endl;
+            cout << string(CHARSKIP1, ' ') << "color discretization scale (default: 256)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-t <double>, --threshold <double>" << endl;
+            cout << string(CHARSKIP1, ' ') << "NN threshold (default: 0.75)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-u <double>, --uppermark <double>" << endl;
+            cout << string(CHARSKIP1, ' ') << "NN rams saturation limit (default: 50)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-w <double>, --watermark <double>" << endl;
+            cout << string(CHARSKIP1, ' ') << "NN rams firing threshold (default: 0)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-k <int>, --cap <int>" << endl;
+            cout << string(CHARSKIP1, ' ') << "color repetition time (default: 2)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-l <int>, --learntime <int>" << endl;
+            cout << string(CHARSKIP1, ' ') << "pre-learning time (in no of frames) (default: 1)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-h, --help" << endl;
+            cout << string(CHARSKIP1, ' ') << "display this help" << endl;
+            cout << string(CHARSKIP2, ' ') << "-v, --verbose" << endl;
+            cout << string(CHARSKIP1, ' ') << "display system and video configuration" << endl;
+            cout << string(CHARSKIP2, ' ') << "-r, --reverse" << endl;
+            cout << string(CHARSKIP1, ' ') << "process video also in reverse mode" << endl;
             return 0;
         } else if (*i == "-v" || *i == "--verbose") {
             verboseFlag = true;
         } else if (*i == "-r" || *i == "--reverse") {
             reverseFlag = true;
-        } else if (*i == "-i" || *i == "--indir") {
-            indirname = *++i;
+        } else if (*i == "-i" || *i == "--input") {
+            videofile = *++i;
             int pos;
-            if ((pos = indirname.find_last_of("/\\")) == indirname.size() - 1) {
-                indirname = indirname.substr(0,indirname.size()-1);
-                pos = indirname.find_last_of("/\\");
+            if ((pos = videofile.find_last_of("/\\")) == videofile.size() - 1) {
+                videofile = videofile.substr(0,videofile.size()-1);
+                pos = videofile.find_last_of("/\\");
             }
-            videoname = indirname.substr(pos+1);
-            if ((dp = opendir (indirname.c_str())) == NULL) {
-                cerr << "Parse error: Could not open input dir" << endl;
-                exit(-1);
-            }
-        } else if (*i == "-o" || *i == "--outdir") {
-            outdirname = *++i;
+            videoname = videofile.substr(pos+1);
+        } else if (*i == "-o" || *i == "--outfile") {
+            outfilename = *++i;
             outflag = true;
-            if ((op = opendir (outdirname.c_str())) == NULL) {
-                cerr << "Parse error: Could not open output dir" << endl;
-                exit(-1);
-            }
         } else if (*i == "-m" || *i == "--mode") {
             coding = *++i;
         } else if (*i == "-k" || *i == "--cap") {
@@ -245,12 +239,7 @@ int main(int argc, char** argv) {
             exit(-1);
         }
     }
-
-
-    if ((dcnt = getdir(indirname.c_str(), dlist, extArg)) < 0) {
-        cerr << "I/O Error: Empty input dir" << endl;
-        exit(-1);
-    }
+    
     if (coding == "RGB") {
         convert = &rgb2rgb;
         backconvert = &rgb2rgb;
@@ -269,17 +258,30 @@ int main(int argc, char** argv) {
         exit(-1);
     }
     delta = 256 / ntics;
-    // Get firt frame
-    frame_orig = imread(indirname + "/" + dlist[frameidx]);
-    if(! frame_orig.data ) {
-        cout << "Could not open read frame" << endl;
+    // Get sequence info (from frame set or movie file)
+    VideoCapture cap(videofile);
+    if(!cap.isOpened()) { // check if we succeeded
+        cout << "I/O error: problem opening video/sequence" << endl;
         exit(-1);
     }
-    convert(frame_orig, frame);
-    int w = frame.cols;
-    int h = frame.rows;
-    cout << "Processing Video (" << w << "x" << h << ")" << endl;
-
+    w = (int)cap.get(CV_CAP_PROP_FRAME_WIDTH);
+    h = (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+    numframes = (int)cap.get(CV_CAP_PROP_FRAME_COUNT);
+    fps = (int)cap.get(CV_CAP_PROP_FPS);
+    
+    // Prefetch movie in vector of frame
+    typedef vector<Mat> FramesVec;
+    vector<Mat> frames;
+    frames.reserve(cap.get(CV_CAP_PROP_FRAME_COUNT));
+    
+    while (cap.read(frame_orig)) {
+        convert(frame_orig, frame);
+        frames.push_back(frame.clone());
+    }
+    cap.release();
+    cout << "Processing Video (" << w << "x" << h << ") with " << numframes << " frames"<< endl;
+    
+    // Initialize Background Subtractor algorithm
     Ptr<BackgroundSubtractorWIS> Subtractor;
     Subtractor = createBackgroundSubtractorWIS();
     Subtractor->set("noBits", nbit);
@@ -292,11 +294,11 @@ int main(int argc, char** argv) {
     Subtractor->set("varUpWatermark", uppermark);
     Subtractor->set("selectThreshold", selectthresh);
     Subtractor->set("learningStage", learntime);
-    Subtractor->initialize(frame.size(), frame.type());
+    Subtractor->initialize(frames.at(0).size(), frames.at(0).type());
     if (verboseFlag) {
         cout << left << setw(MAXWIDTH) << setfill(filler) << "I/O GRAPHICS PARAMS" << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Video Coding" << ": " << coding << endl;
-        cout << left << setw(MAXWIDTH) << setfill(filler) << "Input Directory" << ": " << indirname << endl;
+        cout << left << setw(MAXWIDTH) << setfill(filler) << "Input Directory" << ": " << videofile << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Video Name" << ": " << videoname << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Blur" << ": " << blurFlag << endl;
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Erosion" << ": " << erosionFlag << endl;
@@ -315,45 +317,34 @@ int main(int argc, char** argv) {
         cout << left << setw(MAXWIDTH) << setfill(filler) << "Cachesize: " << Subtractor->getInt("cacheSize") << endl;
     }
     
-    // Open Video Stream and get properties
-    fps = 30;
-    mfps = (int)fps;
     // Create output display and its geometry
     int hskip = 16, wskip = 4;
     int dcols = 3;
-    //Mat outFrame(2*h+2*hskip+wskip,w*dcols+(dcols+1)*wskip,CV_8UC3,bgcolor);
     Mat outFrame(h+hskip+wskip,w*dcols+(dcols+1)*wskip,CV_8UC3,bgcolor);
     
-    // create window an put icons
+    // Create window an put icons
     cvNamedWindow(WinTitle.c_str(),CV_WINDOW_AUTOSIZE);
     
-    int cnt = 0;
-    // video processing loop
-    int plus = 1;
-    
-    while (frameidx >= 0 and frameidx < dcnt) {
+    // Video processing loop
+    FramesVec::const_iterator begin = frames.begin();
+    FramesVec::const_iterator it    = begin;
+    FramesVec::const_iterator end   = frames.end();
+    bool forward = true, stop = false;
+    gettimeofday(&t0,NULL);
+    do {
+        if (it == begin && forward == false) stop = true;
         gettimeofday(&t1,NULL);
-        frame_orig = imread(indirname + "/" + dlist[frameidx]);  //get one frame form video
-        if(! frame_orig.data ) {
-            cout << "Could not open read frame" << endl;
-            exit(-1);
-        }
+        
+        frame = (*it); // get image and blur it
         if (blurFlag) blur(frame,frame,Size(3,3));
-        convert(frame_orig, frame);
-
+        
         Subtractor->apply(frame, tmpMask);  // update Background Model (training)
         Subtractor->getBackgroundImage(bgmodel); // get Background Model
         
         if (erosionFlag) { erode(tmpMask,tmpMask,cv::Mat()); }
         if (dilationFlag){ dilate(tmpMask,tmpMask,cv::Mat());}
         
-        if (waitKey(30) >= 0)
-            break;
-        gettimeofday(&t2,NULL);
-        rfps = (int)(1.0 / ((double) (t2.tv_usec - t1.tv_usec)/1000000 + (double) (t2.tv_sec - t1.tv_sec)));
-        if (mfps != rfps && frameidx % 5 == 0) mfps = rfps;
-        
-        // Back convert for display
+        // back convert for display
         backconvert(frame,frame);
         backconvert(bgmodel, bgmodel);
         // difference by luminance (Ycrcb)
@@ -365,7 +356,7 @@ int main(int argc, char** argv) {
         threshold(deltaimg,deltaimg, 20, 255, CV_THRESH_BINARY);
         cvtColor(deltaimg,deltaimg,CV_GRAY2BGR,3);
         
-        // build up disaply
+        // build up display
         outFrame.setTo(bgcolor);
         imglist.clear();
         titlelist.clear();
@@ -377,10 +368,20 @@ int main(int argc, char** argv) {
         titlelist.push_back(make_pair(titledownleft,Point(wskip*3+2*w,hskip-5)));
         showImages(outFrame, imglist, titlelist);
         waitKey(1);
-        frameidx += plus;
-        if (reverseFlag and frameidx == dcnt) { plus = -1; frameidx--; frameidx--; };  // reverse
-    }
-    if (outflag) imwrite(outdirname + "/BC_" + videoname + ".png", bgmodel);
+        if (forward) { ++frameidx; ++it; } else { --frameidx; --it;}
+        /* If iterator is at the end - check reverse mode (otherwise exit loop) */
+        if (it == end) {
+            if (reverseFlag) {
+                forward = false;
+                --frameidx;
+                --it;
+            } else stop = true;
+        }
+        gettimeofday(&t2,NULL);
+        rfps = (int)(1.0 / ((double) (t2.tv_usec - t1.tv_usec)/1000000 + (double) (t2.tv_sec - t1.tv_sec)));
+    } while (!stop);
+    // Print timing statistics and BG
+    cout << "Processed at " << rfps << " FPS - Total time " << (t2.tv_sec - t0.tv_sec) << " sec"<< endl;
+    if (outflag) imwrite(outfilename, bgmodel);
 }
-
 
