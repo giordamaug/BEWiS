@@ -33,33 +33,21 @@ Plain Text:
  
 Bibtex:
 
-<code>
+```
 @Inbook{DeGregorio2015,
-
-author="De Gregorio, Massimo and Giordano, Maurizio",
-
-editor="Murino, Vittorio and Puppo, Enrico and Sona, Diego and Cristani, Marco and Sansone, Carlo",
-
-title="Background Modeling by Weightless Neural Networks",
-
-bookTitle="New Trends in Image Analysis and Processing -- ICIAP 2015 Workshops: ICIAP 2015 International Workshops, BioFor, CTMR, RHEUMA, ISCA, MADiMa, SBMI, and QoEM, Genoa, Italy, September 7-8, 2015, Proceedings",
-
-year="2015",
-
-publisher="Springer International Publishing",
-
-address="Cham",
-
-pages="493--501",
-
-isbn="978-3-319-23222-5",
-
-doi="10.1007/978-3-319-23222-5_60",
-
-url="http://dx.doi.org/10.1007/978-3-319-23222-5_60"
-
+    author="De Gregorio, Massimo and Giordano, Maurizio",
+    editor="Murino, Vittorio and Puppo, Enrico and Sona, Diego and Cristani, Marco and Sansone, Carlo"
+    title="Background Modeling by Weightless Neural Networks",
+    bookTitle="New Trends in Image Analysis and Processing -- ICIAP 2015 Workshops: ICIAP 2015 International Workshops, BioFor, CTMR, RHEUMA, ISCA, MADiMa, SBMI, and QoEM, Genoa, Italy, September 7-8, 2015, Proceedings",
+    year="2015",
+    publisher="Springer International Publishing",
+    address="Cham",
+    pages="493--501",
+    isbn="978-3-319-23222-5",
+    doi="10.1007/978-3-319-23222-5_60",
+    url="http://dx.doi.org/10.1007/978-3-319-23222-5_60"
 }
-</code>
+```
 
 ----------------------
 License
