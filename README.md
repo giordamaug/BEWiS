@@ -61,7 +61,12 @@ To run the code the following libraries must be installed:
 
 <b>Create Docker Container to test BEWiS (Any system)</b>
 
+Reqquire docker 1.12.x or later (https://docs.docker.com)
+
 <code>$ docker build -t bewis/pyopencv:latest .</code>
-<code>root@\<imagetag\>:/home/BEWiS# docker run -i -t bewis/pyopencv:latest /bin/bash
+
+<code>root@\<imagetag\>:/home/BEWiS# docker run -i -t bewis/pyopencv:latest /bin/bash</code>
+
+<code>root@\<imagetag\>:/home/BEWiS# ./bewis  -i foliage.avi</code>
 
 
