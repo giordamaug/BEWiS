@@ -53,11 +53,12 @@ To run the code the following libraries must be installed:
 
 <b>Compile/Run BEWiS source (Linux, Mac OSX):</b>
 
-$ cmake .
+<font face=”Courier New, Courier,	mono”>$ cmake .
 
 $ make
 
-$ bewis  -i \<inputidr\>
+$ bewis  -i <inputidr>
+</font>
 
 <b>Create Docker Container to test BEWiS (Any system)</b>
 
