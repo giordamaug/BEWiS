@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
     for (vector<string>::iterator i = args.begin(); i != args.end(); ++i) {
         if (*i == "-h" || *i == "--help") {
             cout << "Syntax: bewis -i <infile>" << endl;
-            cout << string(CHARSKIP1, ' ') << "video file (or first frame filename of sequence)" << endl;
+            cout << string(CHARSKIP1, ' ') << "video file (or frame filename <path>/video_%d.png))" << endl;
             cout << string(CHARSKIP2, ' ') << "-o <outfile>, --outfile <outfile>" << endl;
             cout << string(CHARSKIP1, ' ') << "BG output filename" << endl;
             cout << string(CHARSKIP2, ' ') << "-m <RGB|Lab|HUV>, --mode <RGB|Lab|HUV>" << endl;
