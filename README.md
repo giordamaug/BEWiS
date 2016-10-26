@@ -83,11 +83,11 @@ To run the code the following libraries are required:
 
 3. C++ Compiler (tested only with GCC 5.x or later versions)
 
-<code>$ cmake .</code>
-
-<code>$ make</code>
-
-<code>$ bewis  -i videofile</code>
+```
+$ cmake .</code>
+$ make</code>
+$ bewis  -i videofile</code>
+```
 
 ----------------------
 Create Docker Container to test BEWiS (Any system)
@@ -95,10 +95,10 @@ Create Docker Container to test BEWiS (Any system)
 
 Require docker 1.12.x or later (avauilable at: https://docs.docker.com)
 
-<code>$ docker build -t bewis/pyopencv:latest .</code>
-
-<code>root@\<imagetag\>:/home/BEWiS# docker run -i -t bewis/pyopencv:latest /bin/bash</code>
-
-<code>root@\<imagetag\>:/home/BEWiS# ./bewis  -i foliage.avi</code>
+```
+$ docker build -t bewis/pyopencv:latest .
+root@\<imagetag\>:/home/BEWiS# docker run -i -t bewis/pyopencv:latest /bin/bash
+root@\<imagetag\>:/home/BEWiS# ./bewis  -i foliage.avi
+```
 
 
