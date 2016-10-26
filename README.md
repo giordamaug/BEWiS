@@ -2,7 +2,7 @@
 Background Estimation by Weightless Neural Networks
 
 > Authors: Maurizio Giordano and Massimo De Gregorio
-Institution:  Consiglio Nazionale delle Rierche (Italy)
+Institution:  Consiglio Nazionale delle Ricerche (Italy)
 
 ----------------------
 Description
