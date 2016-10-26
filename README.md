@@ -1,7 +1,7 @@
 # BEWiS
 Background Estimation by Weightless Neural Networks
 
-Authors: Maurizio Giordano and Massimo De Gregorio
+> Authors: Maurizio Giordano and Massimo De Gregorio
 Institution:  Consiglio Nazionale delle Rierche (Italy)
 
 ----------------------
