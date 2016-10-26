@@ -51,7 +51,7 @@ To run the code the following libraries must be installed:
 
 3. C++ Compiler (tested only with GCC 5.x or later versions)
 
-<b>Compile source (Linux, Mac OSX):</b>
+<b>Compile/Run BEWiS source (Linux, Mac OSX):</b>
 
 $ cmake .
 
@@ -59,6 +59,8 @@ $ make
 
 $ bewis  -i \<inputidr\>
 
+<b>Create Docker Container to test BEWiS (Any system)</b>
 
+$ docker build -t bewis:latest .
 
 
