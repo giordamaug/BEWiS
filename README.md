@@ -51,8 +51,7 @@ To run the code the following libraries must be installed:
 
 3. C++ Compiler (tested only with GCC 5.x or later versions)
 
-Compile source (Linux, Mac OSX):
-----------------------
+<b>Compile source (Linux, Mac OSX):</b>
 
 $ cmake .
 
