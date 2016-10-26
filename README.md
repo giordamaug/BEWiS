@@ -53,7 +53,7 @@ To run the code the following libraries must be installed:
 
 <b>Compile/Run BEWiS source (Linux, Mac OSX):</b>
 
-<font face="Courier New, Courier,	mono">$ cmake .</font>
+<code>$ cmake .</code>
 
 $ make
 
