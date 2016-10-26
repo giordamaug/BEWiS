@@ -40,10 +40,10 @@ either version 3 of the License or (at your option) any later version.
 A copy of the GPL license is provided in the "GPL.txt" file.
 
 ----------------------
-Instructions and Notes
+Compile/Run BEWiS source (Linux, Mac OSX)
 ----------------------
 
-To run the code the following libraries must be installed:
+To run the code the following libraries are required:
 
 1. OpenCV 3.0 (later versions may also work)
 
@@ -51,17 +51,17 @@ To run the code the following libraries must be installed:
 
 3. C++ Compiler (tested only with GCC 5.x or later versions)
 
-<b>Compile/Run BEWiS source (Linux, Mac OSX):</b>
-
 <code>$ cmake .</code>
 
 <code>$ make</code>
 
 <code>$ bewis  -i videofile</code>
 
-<b>Create Docker Container to test BEWiS (Any system)</b>
+----------------------
+Create Docker Container to test BEWiS (Any system)
+----------------------
 
-Reqquire docker 1.12.x or later (https://docs.docker.com)
+Require docker 1.12.x or later (avauilable at: https://docs.docker.com)
 
 <code>$ docker build -t bewis/pyopencv:latest .</code>
 
