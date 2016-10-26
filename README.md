@@ -61,6 +61,7 @@ To run the code the following libraries must be installed:
 
 <b>Create Docker Container to test BEWiS (Any system)</b>
 
-<code>$ docker build -t bewis:latest .</code>
+<code>$ docker build -t bewis/pyopencv:latest .</code>
+<code>root@\<imagetag\>:/home/BEWiS# docker run -i -t bewis/pyopencv:latest /bin/bash
 
 
