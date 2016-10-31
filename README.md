@@ -21,7 +21,14 @@ changes during the video timeline.
 Citation Details
 ----------------------
   
-Please cite the following journal article when using this source code:
+This work is the subject of the article:
+
+M. De Gregorio, M. Giordano.
+ Background Estimation by Weightless Neural Networks.
+ submitted to "Pattern Recognition Letters - Special Issue on Scene Background Modeling and Initialization".
+ 
+At the current time, when using this source code please reference this work by citing the following
+paper which deals with a previous version of this software:
 
 Plain Text:
 
