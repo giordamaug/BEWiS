@@ -30,8 +30,6 @@ M. De Gregorio, M. Giordano.
 At the current time, when using this source code please reference this work by citing the following
 paper which deals with a previous version of this software:
 
-Plain Text:
-
  M. De Gregorio, M. Giordano.
  Background Modeling by Weightless Neural Networks.
  in "New Trends in Image Analysis and Processing - ICIAP 2015 Workshops", 
