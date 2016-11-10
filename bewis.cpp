@@ -221,7 +221,7 @@ int main(int argc, char** argv) {
         } else if (arg == "-w" || arg == "--watermark") {
             watermark = (double)atof((*i).c_str());
         } else if (arg == "-u" || arg == "--uppermark") {
-            uppermark = (double)atof((*++i).c_str());
+            uppermark = (double)atof((*i).c_str());
         } else if (arg == "-z" || arg == "--scale") {
             ntics = atoi((*i).c_str());
         } else if (arg == "-l" || arg == "--learntime") {
