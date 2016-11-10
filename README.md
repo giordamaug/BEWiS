@@ -1,8 +1,8 @@
 # BEWiS
 Background Estimation by Weightless Neural Networks
 
-Authors: Maurizio Giordano and Massimo De Gregorio
-Institution:  Consiglio Nazionale delle Rierche (Italy)
+> Authors: Maurizio Giordano and Massimo De Gregorio
+Institution:  Consiglio Nazionale delle Ricerche (Italy)
 
 ----------------------
 Description
@@ -21,13 +21,38 @@ changes during the video timeline.
 Citation Details
 ----------------------
   
-Please cite the following journal article when using this source code:
+This work is the subject of the article:
+
+M. De Gregorio, M. Giordano.
+ "Background Estimation by Weightless Neural Networks".
+ Submitted to "Pattern Recognition Letters - Special Issue on Scene Background Modeling and Initialization".
+ 
+At the current time, when using this source code please reference this work by citing the following
+paper which deals with a previous version of this software:
 
  M. De Gregorio, M. Giordano.
  Background Modeling by Weightless Neural Networks.
- in "New Trends in Image Analysis and Processing - ICIAP 2015 Workshops", 
+ In "New Trends in Image Analysis and Processing - ICIAP 2015 Workshops", 
  Volume 9281 of the series Lecture Notes in Computer Science, pp 493-501.
  Springer Verlag, http://dx.doi.org/10.1007/978-3-319-23222-5_60 
+ 
+Bibtex:
+
+```
+@Inbook{DeGregorio2015,
+    author="De Gregorio, Massimo and Giordano, Maurizio",
+    editor="Murino, Vittorio and Puppo, Enrico and Sona, Diego and Cristani, Marco and Sansone, Carlo"
+    title="Background Modeling by Weightless Neural Networks",
+    bookTitle="New Trends in Image Analysis and Processing -- ICIAP 2015 Workshops: ICIAP 2015 International Workshops, BioFor, CTMR, RHEUMA, ISCA, MADiMa, SBMI, and QoEM, Genoa, Italy, September 7-8, 2015, Proceedings",
+    year="2015",
+    publisher="Springer International Publishing",
+    address="Cham",
+    pages="493--501",
+    isbn="978-3-319-23222-5",
+    doi="10.1007/978-3-319-23222-5_60",
+    url="http://dx.doi.org/10.1007/978-3-319-23222-5_60"
+}
+```
 
 ----------------------
 License
@@ -40,10 +65,10 @@ either version 3 of the License or (at your option) any later version.
 A copy of the GPL license is provided in the "GPL.txt" file.
 
 ----------------------
-Instructions and Notes
+Compile/Run BEWiS source (Linux, Mac OSX)
 ----------------------
 
-To run the code the following libraries must be installed:
+To run the code the following libraries are required:
 
 1. OpenCV 3.0 (later versions may also work)
 
@@ -51,14 +76,22 @@ To run the code the following libraries must be installed:
 
 3. C++ Compiler (tested only with GCC 5.x or later versions)
 
-Configure and compile sources:
+```
+$ cmake .</code>
+$ make</code>
+$ bewis  -i videofile</code>
+```
 
-$ cmake .
+----------------------
+Create Docker Container to test BEWiS (Any system)
+----------------------
 
-$ make
+Require docker 1.12.x or later (avauilable at: https://docs.docker.com)
 
-$ bewis  -i \<inputidr\>
-
-
+```
+$ docker build -t bewis/pyopencv:latest .
+root@\<imagetag\>:/home/BEWiS# docker run -i -t bewis/pyopencv:latest /bin/bash
+root@\<imagetag\>:/home/BEWiS# ./bewis  -i foliage.avi
+```
 
 
