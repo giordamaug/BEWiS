@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
     int nbit = 4, ntics = 256, learntime = 1, cachesize = 20;
     string policy = "1:1";
     double watermark = 0.0, uppermark = 50.0, thresh = 0.75;
-    int selectthresh = 2;
+    int selectthresh = 0;
     vector<string> args(argv + 1, argv + argc);
     for (vector<string>::iterator i = args.begin(); i != args.end(); ++i) {
         if (*i == "-h" || *i == "--help") {
@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
             cout << string(CHARSKIP2, ' ') << "-w <double>, --watermark <double>" << endl;
             cout << string(CHARSKIP1, ' ') << "NN rams firing threshold (default: 0)" << endl;
             cout << string(CHARSKIP2, ' ') << "-k <int>, --cap <int>" << endl;
-            cout << string(CHARSKIP1, ' ') << "color repetition time (default: 2)" << endl;
+            cout << string(CHARSKIP1, ' ') << "color repetition time (default: 0)" << endl;
             cout << string(CHARSKIP2, ' ') << "-l <int>, --learntime <int>" << endl;
             cout << string(CHARSKIP1, ' ') << "pre-learning time (in no of frames) (default: 1)" << endl;
             cout << string(CHARSKIP2, ' ') << "-h, --help" << endl;
