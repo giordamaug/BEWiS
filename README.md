@@ -77,9 +77,9 @@ To run the code the following libraries are required:
 3. C++ Compiler (tested only with GCC 5.x or later versions)
 
 ```
-$ cmake .</code>
-$ make</code>
-$ bewis  -i videofile</code>
+$ cmake .
+$ make
+$ bewis  -i videofile
 ```
 
 ----------------------
