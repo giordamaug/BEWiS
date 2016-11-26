@@ -79,7 +79,7 @@ To run the code the following libraries are required:
 ```
 $ cmake .
 $ make
-$ bewis  -i videofile
+$ bewis  -i <video-filepathname>
 ```
 
 ----------------------
