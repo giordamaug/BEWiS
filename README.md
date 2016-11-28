@@ -2,7 +2,8 @@
 Background Estimation by Weightless Neural Networks
 
 > Authors: Maurizio Giordano and Massimo De Gregorio
-Institution:  Consiglio Nazionale delle Ricerche (Italy)
+> - Istituto di Calcolo e Reti ad Alte Prestazioni (ICAR) - Consiglio Nazionale delle Ricerche (CNR) (Italy)
+> - Istituto di Scienze Applicate e Sistemi Intelligenti "Eduardo Caianiello" (ISASI) - Consiglio Nazionale delle Ricerche (CNR) (Italy)
 
 ----------------------
 Description
