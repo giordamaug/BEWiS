@@ -10,9 +10,9 @@ Description
 ----------------------
 
 BEWiS is a background modeling approach for videos based on a weightless neural system, 
-namely WiSARD, with the aim of exploiting its features of being highly adaptive and 
+namely WiSARD<sup>rp</sup>, with the aim of exploiting its features of being highly adaptive and 
 noise–tolerance at runtime.
-In BEWiS, the changing pixel colors in a video are processed by a an incremental 
+In BEWiS, the changing pixel colors in a video are processed by an incremental 
 learning neural network with a limited-in-time memory-retention mechanism that allow the
 proposed system to absorb small variations of the learned model (background) 
 in the steady state of operation as well as to  fastly adapt to background 
