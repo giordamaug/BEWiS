@@ -179,6 +179,8 @@ int main(int argc, char** argv) {
             cout << string(CHARSKIP1, ' ') << "NN rams firing threshold (default: 0)" << endl;
             cout << string(CHARSKIP2, ' ') << "-k <int>, --cap <int>" << endl;
             cout << string(CHARSKIP1, ' ') << "color repetition time (default: 0)" << endl;
+            cout << string(CHARSKIP2, ' ') << "-q <int>, --qsize <int>" << endl;
+            cout << string(CHARSKIP1, ' ') << "cache queue size (default: 20)" << endl;
             cout << string(CHARSKIP2, ' ') << "-l <int>, --learntime <int>" << endl;
             cout << string(CHARSKIP1, ' ') << "pre-learning time (in no of frames) (default: 1)" << endl;
             cout << string(CHARSKIP2, ' ') << "-h, --help" << endl;
@@ -216,6 +218,8 @@ int main(int argc, char** argv) {
             coding = *i;
         } else if (arg == "-k" || arg == "--cap") {
             selectthresh = atoi((*i).c_str());
+        } else if (arg == "-q" || arg == "--qsize") {
+            cachesize = atoi((*i).c_str());
         } else if (arg == "-b" || arg == "--bits") {
             nbit = atoi((*i).c_str());
         } else if (arg == "-w" || arg == "--watermark") {
