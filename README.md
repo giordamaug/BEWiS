@@ -87,12 +87,12 @@ $ bewis  -i <video-filepathname>
 Create Docker Container to test BEWiS (Any system)
 ----------------------
 
-Require docker 1.12.x or later (avauilable at: https://docs.docker.com)
+Require docker 1.12.x or later (available at: https://docs.docker.com)
 
 ```
 $ docker build -t bewis/pyopencv:latest .
 root@\<imagetag\>:/home/BEWiS# docker run -i -t bewis/pyopencv:latest /bin/bash
-root@\<imagetag\>:/home/BEWiS# ./bewis  -i foliage.avi
+root@\<imagetag\>:/home/BEWiS# ./bewis -i foliage.avi
 ```
 
 
