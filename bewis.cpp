@@ -155,10 +155,12 @@ int main(int argc, char** argv) {
     int nbit = 4, ntics = 256, learntime = 1, cachesize = 20;
     string policy = "1:1";
     double watermark = 0.0, uppermark = 50.0, thresh = 0.75;
-    int selectthresh = 0;
+    int selectthresh = -1;
     vector<string> args(argv + 1, argv + argc);
+    string arg, value;
     for (vector<string>::iterator i = args.begin(); i != args.end(); ++i) {
-        if (*i == "-h" || *i == "--help") {
+        arg = String(*i);
+        if (arg == "-h" || arg == "--help") {
             cout << "Syntax: bewis -i <infile>" << endl;
             cout << string(CHARSKIP1, ' ') << "video file (or frame filename <path>/video_%d.png))" << endl;
             cout << string(CHARSKIP2, ' ') << "-o <outfile>, --outfile <outfile>" << endl;
@@ -178,7 +180,7 @@ int main(int argc, char** argv) {
             cout << string(CHARSKIP2, ' ') << "-w <double>, --watermark <double>" << endl;
             cout << string(CHARSKIP1, ' ') << "NN rams firing threshold (default: 0)" << endl;
             cout << string(CHARSKIP2, ' ') << "-k <int>, --cap <int>" << endl;
-            cout << string(CHARSKIP1, ' ') << "color repetition time (default: 0)" << endl;
+            cout << string(CHARSKIP1, ' ') << "color repetition time (default: -1)" << endl;
             cout << string(CHARSKIP2, ' ') << "-q <int>, --qsize <int>" << endl;
             cout << string(CHARSKIP1, ' ') << "cache queue size (default: 20)" << endl;
             cout << string(CHARSKIP2, ' ') << "-l <int>, --learntime <int>" << endl;
@@ -192,57 +194,59 @@ int main(int argc, char** argv) {
             cout << string(CHARSKIP2, ' ') << "-r, --reverse" << endl;
             cout << string(CHARSKIP1, ' ') << "process video also in reverse mode (default: disabled)" << endl;
             return 0;
-        } else if (*i == "-v" || *i == "--verbose") {
+        } else if (arg == "-v" || arg == "--verbose") {
             verboseFlag = true;
-        } else if (*i == "-r" || *i == "--reverse") {
+        } else if (arg == "-r" || arg == "--reverse") {
             reverseFlag = true;
-        } else if (*i == "-x" || *i == "--display") {
+        } else if (arg == "-x" || arg == "--display") {
             displayFlag = true;
-        } else if (*i == "-g" || *i == "--blur") {
+        } else if (arg == "-g" || arg == "--blur") {
             blurFlag = true;
         } else {
-        string arg = *i;
-        if (++i == args.end()) {cout << "Parse error: wrong argument syntax" << endl; exit(-1);}
-        if ((arg == "-i" || arg == "--input")) {
-            videofile = *i;
-            int pos;
-            if ((pos = videofile.find_last_of("/\\")) == videofile.size() - 1) {
-                videofile = videofile.substr(0,videofile.size()-1);
-                pos = videofile.find_last_of("/\\");
-            }
-            videoname = videofile.substr(pos+1);
-        } else if ((arg == "-o" || arg == "--outfile")) {
-            outfilename = *i;
-            outflag = true;
-        } else if (arg == "-m" || arg == "--mode") {
-            coding = *i;
-        } else if (arg == "-k" || arg == "--cap") {
-            selectthresh = atoi((*i).c_str());
-        } else if (arg == "-q" || arg == "--qsize") {
-            cachesize = atoi((*i).c_str());
-        } else if (arg == "-b" || arg == "--bits") {
-            nbit = atoi((*i).c_str());
-        } else if (arg == "-w" || arg == "--watermark") {
-            watermark = (double)atof((*i).c_str());
-        } else if (arg == "-u" || arg == "--uppermark") {
-            uppermark = (double)atof((*i).c_str());
-        } else if (arg == "-z" || arg == "--scale") {
-            ntics = atoi((*i).c_str());
-        } else if (arg == "-l" || arg == "--learntime") {
-            learntime = atoi((*i).c_str());
-        } else if (*i == "-t" || arg == "--threshold") {
-            thresh = (double)atof((*i).c_str());
-        } else if (arg == "-p" || arg == "--policy") {
-            policy = *i;
-            if ((err = parsePolicy(policy,incr,decr)) < 0) {
-                cerr << "Parse error: Argument: -w" << endl;
-                cerr << string(13, ' ') << "policy setting must be <int>:<int>" << endl;
+            arg = String(*i);
+            if (++i == args.end()) {cout << "Parse error: Wrong argument syntax " << arg << endl; exit(-1);}
+            value = String(*i);
+            if (arg == "-i" || arg == "--input") {
+                videofile = value;
+                int pos;
+                if ((pos = videofile.find_last_of("/\\")) == videofile.size() - 1) {
+                    videofile = videofile.substr(0,videofile.size()-1);
+                    pos = videofile.find_last_of("/\\");
+                }
+                videoname = videofile.substr(pos+1);
+            } else if (arg == "-o" || arg == "--outfile") {
+                outfilename = value;
+                outflag = true;
+            } else if (arg == "-m" || arg == "--mode") {
+                coding = value;
+            } else if (arg == "-k" || arg == "--cap") {
+                selectthresh = atoi((value).c_str());
+                cout << "READ" << endl;
+            } else if (arg == "-q" || arg == "--qsize") {
+                cachesize = atoi((value).c_str());
+            } else if (arg == "-b" || arg == "--bits") {
+                nbit = atoi((value).c_str());
+            } else if (arg == "-w" || arg == "--watermark") {
+                watermark = (double)atof((value).c_str());
+            } else if (arg == "-u" || arg == "--uppermark") {
+                uppermark = (double)atof((value).c_str());
+            } else if (arg == "-z" || arg == "--scale") {
+                ntics = atoi((value).c_str());
+            } else if (arg == "-l" || arg == "--learntime") {
+                learntime = atoi((value).c_str());
+            } else if (arg == "-t" || arg == "--threshold") {
+                thresh = (double)atof((*i).c_str());
+            } else if (arg == "-p" || arg == "--policy") {
+                policy = value;
+                if ((err = parsePolicy(policy,incr,decr)) < 0) {
+                    cerr << "Parse error: Argument: -w" << endl;
+                    cerr << string(13, ' ') << "policy setting must be <int>:<int>" << endl;
+                    exit(-1);
+                }
+            } else {
+                cout << "Parse error: wrong argument syntax " << value << endl;
                 exit(-1);
             }
-        } else {
-            cout << "Parse error: wrong argument syntax" << endl;
-            exit(-1);
-        }
         }
     }
     
