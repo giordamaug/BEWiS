@@ -21,10 +21,12 @@ endif()
 # Build bemis program
 set(BGWIZSRC_NAME wisardlib/bgwis.cpp)
 set(MAINSRC_NAME bewis.cpp)
+set(MAINSRC_NAMEX bewisx.cpp)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./wisardlib)
 
 set(LIB_NAME wisard)
 set(BIN_NAME bewis)
+set(BIN_NAMEX bewisx)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 add_library(${LIB_NAME} SHARED ${BGWIZSRC_NAME} wisardlib/wisard.cpp wisardlib/wnet_lib.cpp)
@@ -33,3 +35,7 @@ target_link_libraries( ${LIB_NAME} ${OpenCV_LIBS})
 link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 add_executable(${BIN_NAME} ${MAINSRC_NAME})
 target_link_libraries(${BIN_NAME} ${LIB_NAME} ${OpenCV_LIBS})
+
+add_executable(${BIN_NAMEX} ${MAINSRC_NAMEX})
+target_link_libraries(${BIN_NAMEX} ${LIB_NAME} ${OpenCV_LIBS})
+
