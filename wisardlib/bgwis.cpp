@@ -126,7 +126,7 @@ namespace cv {
                         discr = wiznet->net[j*image.cols + i]; // get discriminator of pixel
                         cache = wiznet->cachearray[j*image.cols + i]; // get cache for pixel
                         // make tuple
-                        B = *data++; G = *data++; R = *data++;
+                        R = *data++; G = *data++; B = *data++;
                         cache = makeTupleCached(cache,R,G,B,neigh_map);
                         wiznet->cachearray[j*image.cols + i] = cache;
                         color = maxcolor[j*image.cols + i];
@@ -337,24 +337,24 @@ namespace cv {
                     prec = prec->next;
                 }
             }
-            void updateMaxColor(unsigned char *color, keyval_t *keys, unsigned char *NB, unsigned char *NG,unsigned char *NR) {
-                unsigned char *B, *G, *R;
-                B = color;
+            void updateMaxColor(unsigned char *color, keyval_t *keys, unsigned char *NR, unsigned char *NG,unsigned char *NB) {
+                unsigned char *R, *G, *B;
+                R = color;
                 G = color+noTics;
-                R = color+noTics+noTics;
-                int cb=0,cg=0,cr=0;
+                B = color+noTics+noTics;
+                int cr=0,cg=0,cb=0;
                 for (int k=0; k < noTics; k++) {
-                    *B = (unsigned char)((keys[_neigh_map[0][k].first].first & _neigh_map[0][k].second) / _neigh_map[0][k].second);
+                    *R = (unsigned char)((keys[_neigh_map[0][k].first].first & _neigh_map[0][k].second) / _neigh_map[0][k].second);
                     *G = (unsigned char)((keys[_neigh_map[1][k].first].first & _neigh_map[1][k].second) / _neigh_map[1][k].second);
-                    *R = (unsigned char)((keys[_neigh_map[2][k].first].first & _neigh_map[2][k].second) / _neigh_map[2][k].second);
-                    if (*B == (unsigned char)1 ) { cb++; }
+                    *B = (unsigned char)((keys[_neigh_map[2][k].first].first & _neigh_map[2][k].second) / _neigh_map[2][k].second);
+                    if (*R == (unsigned char)1 ) { cb++; }
                     if (*G == (unsigned char)1 ) { cg++; }
-                    if (*R == (unsigned char)1 ) { cr++; }
-                    B++; G++; R++;
+                    if (*B == (unsigned char)1 ) { cr++; }
+                    R++; G++; B++;
                 }
-                *NB = (unsigned char)(cb * dimTics);
+                *NR = (unsigned char)(cb * dimTics);
                 *NG = (unsigned char)(cg * dimTics);
-                *NR = (unsigned char)(cr * dimTics);
+                *NB = (unsigned char)(cr * dimTics);
             }
     };
 
